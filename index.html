@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>ShokeRefund Noir</title>
+  <meta name="theme-color" content="#09090f" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="app-shell">
+    <header class="hero panel">
+      <div class="hero-top">
+        <div>
+          <span class="brand-chip">ShokeRefund • Noir Edition</span>
+          <h1 id="heroTitle">Возвраты и поддержка в одном Mini App</h1>
+          <p id="heroSubtitle">Чёрный интерфейс с фиолетово‑голубыми акцентами, быстрым оформлением заявки, живым чатом и Web Admin для обработки тикетов.</p>
+        </div>
+        <div class="hero-stats">
+          <div class="metric-box">
+            <span>Режим</span>
+            <strong id="modeBadge">USER</strong>
+          </div>
+          <div class="metric-box glow-box">
+            <span>Тема</span>
+            <strong>Black / Violet / Cyan</strong>
+          </div>
+        </div>
+      </div>
+      <div class="tab-switch" id="tabSwitch"></div>
+    </header>
+
+    <main class="view-stack">
+      <section id="userView" class="view active">
+        <div class="grid-2">
+          <div class="column-stack">
+            <section class="panel glass">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow">Новая заявка</div>
+                  <h2>Оформление кейса</h2>
+                </div>
+                <div class="status-pill" id="formStatus">Заполни поля</div>
+              </div>
+
+              <div class="chips-row info-row">
+                <div class="mini-stat">
+                  <span>Комиссия</span>
+                  <strong>25%</strong>
+                </div>
+                <div class="mini-stat">
+                  <span>Ответ поддержки</span>
+                  <strong>3–7 мин</strong>
+                </div>
+                <div class="mini-stat">
+                  <span>Формат</span>
+                  <strong>Mini App + Bot</strong>
+                </div>
+              </div>
+
+              <div class="section-block">
+                <div class="section-title">1. Сервис</div>
+                <div class="service-grid" id="serviceGrid"></div>
+              </div>
+
+              <div class="grid-split section-block">
+                <label class="field panel soft-panel">
+                  <span>2. Сумма заказа</span>
+                  <input id="amountInput" inputmode="decimal" placeholder="Например, 1599" />
+                </label>
+                <label class="field panel soft-panel">
+                  <span>3. Комментарий</span>
+                  <textarea id="descriptionInput" rows="4" maxlength="1000" placeholder="Например: не тот заказ, курьер опоздал, поддержка отказала."></textarea>
+                </label>
+              </div>
+
+              <div class="summary-grid">
+                <div class="metric-card violet">
+                  <span>Комиссия</span>
+                  <strong id="commissionValue">0 ₽</strong>
+                </div>
+                <div class="metric-card cyan">
+                  <span>Сумма к оплате</span>
+                  <strong id="toPayValue">0 ₽</strong>
+                </div>
+                <div class="metric-card dark">
+                  <span>После комиссии</span>
+                  <strong id="afterFeeValue">0 ₽</strong>
+                </div>
+              </div>
+
+              <div class="check-grid section-block">
+                <label class="toggle-card">
+                  <input type="checkbox" checked disabled />
+                  <div>
+                    <strong>Поддержка внутри приложения</strong>
+                    <span>Чат по активной заявке без выхода из Mini App</span>
+                  </div>
+                </label>
+                <label class="toggle-card">
+                  <input type="checkbox" id="agreementCheckbox" />
+                  <div>
+                    <strong>Согласие с условиями</strong>
+                    <span>Подтверди, чтобы открыть отправку заявки</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="action-row">
+                <button class="secondary-btn" id="statusButton" type="button">Открыть мою заявку</button>
+                <button class="primary-btn" id="submitButton" type="button">Создать заявку</button>
+              </div>
+            </section>
+
+            <section class="panel glass">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow">Payload</div>
+                  <h2>Что уходит в бота</h2>
+                </div>
+                <span class="hint">web_app_data</span>
+              </div>
+              <pre id="payloadPreview" class="code-box"></pre>
+            </section>
+          </div>
+
+          <div class="column-stack">
+            <section class="panel glass support-panel">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow">Поддержка</div>
+                  <h2>Чат по заявке</h2>
+                </div>
+                <div class="online-badge"><i></i> оператор онлайн</div>
+              </div>
+
+              <div class="chips-row" id="quickReplies"></div>
+              <div class="chat-wrap" id="chatWrap"></div>
+              <div class="composer-wrap">
+                <input id="chatInput" placeholder="Напиши в поддержку по своему кейсу" />
+                <button class="icon-btn" id="chatSendButton" type="button">➜</button>
+              </div>
+              <div class="support-note" id="supportNote">После создания заявки чат сможет показывать реальные сообщения из тикета. До этого доступен smart‑demo режим.</div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="adminView" class="view">
+        <div class="grid-2 admin-grid">
+          <div class="column-stack">
+            <section class="panel glass">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow">Web Admin</div>
+                  <h2>Панель тикетов</h2>
+                </div>
+                <div class="status-pill" id="adminConnectionBadge">demo</div>
+              </div>
+
+              <div class="summary-grid admin-summary" id="adminSummary"></div>
+
+              <div class="toolbar-row">
+                <div class="segmented" id="adminFilters"></div>
+                <div class="toolbar-controls">
+                  <input id="adminSearch" class="toolbar-input" placeholder="Поиск по ID, user_id, сервису" />
+                  <button id="adminRefreshButton" class="secondary-btn" type="button">Обновить</button>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel glass ticket-list-panel">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow">Очередь</div>
+                  <h2>Список тикетов</h2>
+                </div>
+                <span class="hint" id="ticketsCounter">0 тикетов</span>
+              </div>
+              <div id="ticketList" class="ticket-list"></div>
+            </section>
+          </div>
+
+          <div class="column-stack">
+            <section class="panel glass ticket-detail-panel">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow">Карточка</div>
+                  <h2 id="detailTitle">Выбери тикет</h2>
+                </div>
+                <div class="chips-row compact" id="detailPills"></div>
+              </div>
+
+              <div id="ticketMeta" class="detail-meta empty-state">Открой тикет слева, чтобы увидеть детали, историю и сообщения.</div>
+
+              <div class="detail-actions" id="detailActions"></div>
+
+              <div class="detail-chat-shell">
+                <div class="detail-chat" id="adminMessages"></div>
+                <div class="composer-wrap admin-composer">
+                  <input id="adminReplyInput" placeholder="Ответить пользователю прямо из Web Admin" />
+                  <button class="primary-btn compact-btn" id="adminReplyButton" type="button">Отправить</button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
