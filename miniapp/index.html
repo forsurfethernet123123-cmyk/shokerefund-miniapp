@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>ShokeRefund</title>
+  <meta name="theme-color" content="#101828" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body data-theme="dark">
+  <div class="app-shell">
+    <header class="topbar panel">
+      <div class="brand-block">
+        <div class="brand-mark">SR</div>
+        <div>
+          <div class="eyebrow" id="heroEyebrow">ShokeRefund</div>
+          <h1 id="heroTitle">ShokeRefund</h1>
+          <p id="heroSubtitle">Личный кабинет для заявок, фото по заказу, оплаты и связи с поддержкой.</p>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <span class="chip" id="modeBadge">USER</span>
+        <div class="theme-switch">
+          <button id="themeDarkButton" type="button" class="theme-btn active">Ночь</button>
+          <button id="themeLightButton" type="button" class="theme-btn">Свет</button>
+        </div>
+      </div>
+    </header>
+
+    <div id="globalAlert" class="alert hidden"></div>
+
+    <main>
+      <section id="userApp" class="page">
+        <div class="layout user-layout">
+          <div class="column">
+            <section class="panel">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow">Профиль</div>
+                  <h2>Аккаунт Telegram</h2>
+                </div>
+                <span class="chip soft" id="telegramUserBadge">—</span>
+              </div>
+              <div class="info-grid four">
+                <div class="info-card"><span>ID</span><strong id="profileId">—</strong></div>
+                <div class="info-card"><span>Username</span><strong id="profileUsername">—</strong></div>
+                <div class="info-card"><span>Имя</span><strong id="profileName">—</strong></div>
+                <div class="info-card"><span>Канал</span><a id="channelLink" target="_blank" rel="noreferrer">Открыть</a></div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow">Доступ</div>
+                  <h2 id="authTitle">Вход в кабинет</h2>
+                </div>
+                <span class="chip soft" id="authStatusChip">—</span>
+              </div>
+
+              <div id="registerBox" class="auth-box hidden">
+                <p class="muted">Создай логин и пароль для входа в кабинет. Доступ привязан к твоему Telegram-профилю.</p>
+                <div class="field-grid two">
+                  <label class="field"><span>Логин</span><input id="registerLogin" placeholder="Например, shoke_user" /></label>
+                  <label class="field"><span>Пароль</span><input id="registerPassword" type="password" placeholder="Минимум 6 символов" /></label>
+                </div>
+                <label class="remember-row"><input id="registerRemember" type="checkbox" checked /><span>Запомнить на этом устройстве</span></label>
+                <div class="actions"><button id="registerButton" class="btn primary">Создать кабинет</button></div>
+              </div>
+
+              <div id="loginBox" class="auth-box hidden">
+                <p class="muted">Войди, чтобы управлять заявкой, оплачивать счёт и общаться с поддержкой.</p>
+                <div class="field-grid two">
+                  <label class="field"><span>Логин</span><input id="loginValue" autocomplete="username" /></label>
+                  <label class="field"><span>Пароль</span><input id="loginPassword" type="password" autocomplete="current-password" /></label>
+                </div>
+                <label class="remember-row"><input id="loginRemember" type="checkbox" checked /><span>Запомнить на этом устройстве</span></label>
+                <div class="actions">
+                  <button id="loginButton" class="btn primary">Войти</button>
+                  <button id="resetPasswordToggle" class="btn ghost">Сменить логин и пароль</button>
+                </div>
+                <div id="resetBox" class="hidden top-gap">
+                  <div class="field-grid two">
+                    <label class="field"><span>Новый логин</span><input id="resetLogin" autocomplete="username" /></label>
+                    <label class="field"><span>Новый пароль</span><input id="resetPassword" type="password" autocomplete="new-password" /></label>
+                  </div>
+                  <label class="remember-row"><input id="resetRemember" type="checkbox" checked /><span>Запомнить новые данные</span></label>
+                  <div class="actions"><button id="resetButton" class="btn secondary">Сохранить новые данные</button></div>
+                </div>
+              </div>
+
+              <div id="cabinetBox" class="auth-box hidden">
+                <div class="info-grid three">
+                  <div class="info-card"><span>Логин</span><strong id="cabinetLogin">—</strong></div>
+                  <div class="info-card"><span>Отзывы</span><a id="reviewsLink" target="_blank" rel="noreferrer">Открыть</a></div>
+                  <div class="info-card"><span>Соглашение</span><a id="agreementLink" target="_blank" rel="noreferrer">Открыть</a></div>
+                </div>
+                <div class="actions top-gap"><button id="logoutButton" class="btn ghost">Выйти</button></div>
+              </div>
+            </section>
+
+            <section class="panel hidden" id="ticketFormCard">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow">Оформление заявки</div>
+                  <h2>Создай новое обращение</h2>
+                </div>
+                <span class="chip soft" id="ticketFormChip">готово</span>
+              </div>
+              <p class="muted helper-copy">Укажи точную сумму и кратко опиши состав корзины. После создания заявки прикрепи фото заказа. Ожидайте ответа от поддержки. Следи за ответами поддержки и обновлением статуса внутри кабинета.</p>
+              <div class="service-grid" id="serviceGrid"></div>
+              <div class="field-grid two top-gap">
+                <label class="field"><span>Сумма заказа</span><input id="ticketAmount" inputmode="decimal" placeholder="Например, 1599" /></label>
+                <label class="field"><span>Описание корзины</span><textarea id="ticketDescription" rows="5" placeholder="Кратко опиши состав заказа и суть проблемы"></textarea></label>
+              </div>
+              <div class="summary-grid top-gap">
+                <div class="summary-card violet"><span>Комиссия</span><strong id="summaryCommission">0 ₽</strong></div>
+                <div class="summary-card cyan"><span>Сумма заказа</span><strong id="summaryOrder">0 ₽</strong></div>
+                <div class="summary-card neutral"><span>После комиссии</span><strong id="summaryAfter">0 ₽</strong></div>
+              </div>
+              <div class="actions top-gap"><button id="createTicketButton" class="btn primary">Создать заявку</button></div>
+            </section>
+
+            <section class="panel hidden" id="historyCard">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow">История</div>
+                  <h2>Мои заявки</h2>
+                </div>
+                <span class="chip soft" id="historyCount">0</span>
+              </div>
+              <div id="ticketHistory" class="ticket-list"></div>
+            </section>
+          </div>
+
+          <div class="column">
+            <section class="panel hidden" id="activeTicketCard">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow">Текущая заявка</div>
+                  <h2 id="ticketTitle">Заявка</h2>
+                </div>
+                <span class="chip soft" id="ticketStatus">—</span>
+              </div>
+              <div class="info-grid three" id="ticketMetaGrid">
+                <div class="info-card"><span>Сервис</span><strong id="ticketService">—</strong></div>
+                <div class="info-card"><span>Сумма</span><strong id="ticketAmountValue">—</strong></div>
+                <div class="info-card"><span>Обновлена</span><strong id="ticketUpdated">—</strong></div>
+              </div>
+              <div class="description" id="ticketDescriptionValue">—</div>
+            </section>
+
+            <section class="panel hidden" id="paymentCard">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow">Оплата</div>
+                  <h2>Счёт и проверка оплаты</h2>
+                </div>
+                <span class="chip soft" id="paymentStatusChip">—</span>
+              </div>
+              <div class="info-grid three">
+                <div class="info-card"><span>Счёт</span><strong id="invoiceAmountValue">—</strong></div>
+                <div class="info-card"><span>Скидка BUFF</span><strong id="promoDiscountValue">—</strong></div>
+                <div class="info-card"><span>К оплате</span><strong id="payableAmountValue">—</strong></div>
+              </div>
+              <div class="description" id="invoiceNoteValue">Счёт пока не выставлен.</div>
+              <div class="promo-box top-gap">
+                <label class="field"><span>Промокод</span><input id="promoInput" placeholder="Введите BUFF" /></label>
+                <button id="applyPromoButton" class="btn secondary">Применить</button>
+              </div>
+              <p class="muted top-gap promo-note" id="promoHint">BUFF даёт скидку 5% от суммы счёта. Каждый пользователь может активировать код один раз, всего доступно 100 активаций.</p>
+              <div class="method-grid top-gap" id="paymentMethodGrid"></div>
+              <div class="actions top-gap">
+                <button id="verifyPaymentButton" class="btn primary">Проверить оплату</button>
+              </div>
+            </section>
+
+            <section class="panel hidden" id="uploadCard">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow">Фото заказа</div>
+                  <h2>Прикрепить изображения</h2>
+                </div>
+                <span class="chip soft" id="attachmentCount">0 файлов</span>
+              </div>
+              <p class="muted">Добавь фото заказа, скриншоты переписки, оплаты и другие материалы прямо внутри кабинета.</p>
+              <div class="upload-box">
+                <input id="photoInput" type="file" accept="image/*" multiple />
+                <div class="actions"><button id="uploadPhotosButton" class="btn secondary">Загрузить фото</button></div>
+              </div>
+              <div id="selectedFilesHint" class="muted top-gap">Файлы не выбраны.</div>
+              <div id="attachmentGallery" class="gallery"></div>
+            </section>
+
+            <section class="panel hidden" id="chatCard">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow">Поддержка</div>
+                  <h2>Чат по заявке</h2>
+                </div>
+                <span class="chip online">онлайн</span>
+              </div>
+              <div class="chat-list" id="userMessages"></div>
+              <div class="composer"><input id="userReplyInput" placeholder="Напиши сообщение поддержке" /><button id="userReplyButton" class="btn primary">Отправить</button></div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="adminApp" class="page hidden">
+        <div class="layout admin-layout">
+          <div class="column">
+            <section class="panel">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow">Статистика</div>
+                  <h2>Обзор очереди</h2>
+                </div>
+                <span class="chip soft" id="adminStatusChip">—</span>
+              </div>
+              <div id="adminSummary" class="summary-grid admin-summary"></div>
+            </section>
+
+            <section class="panel">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow">Фильтр</div>
+                  <h2>Поиск и статусы</h2>
+                </div>
+              </div>
+              <div id="adminFilters" class="filter-row"></div>
+              <div class="field-inline top-gap"><input id="adminSearch" placeholder="Поиск по ID, user_id, сервису, тексту" /><button id="adminSearchButton" class="btn secondary">Найти</button></div>
+            </section>
+
+            <section class="panel">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow">Очередь</div>
+                  <h2>Тикеты</h2>
+                </div>
+                <span class="chip soft" id="ticketCounter">0</span>
+              </div>
+              <div id="ticketList" class="ticket-list"></div>
+            </section>
+          </div>
+
+          <div class="column">
+            <section class="panel">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow">Карточка</div>
+                  <h2 id="adminTicketTitle">Выбери тикет</h2>
+                </div>
+                <span class="chip soft" id="adminTicketStatus">—</span>
+              </div>
+              <div id="adminTicketMeta" class="empty-block">Слева появится список тикетов. Открой один из них для детальной работы.</div>
+              <div class="field-grid two top-gap hidden" id="assignBox">
+                <label class="field"><span>Ответственный админ</span><select id="assignAdminSelect"></select></label>
+                <label class="field"><span>Счёт, ₽</span><input id="invoiceAmountInput" inputmode="decimal" placeholder="Например, 1200" /></label>
+              </div>
+              <label class="field top-gap hidden" id="invoiceNoteBox"><span>Комментарий к счёту / реквизиты</span><textarea id="invoiceNoteInput" rows="4" placeholder="Укажи реквизиты, комментарий или пояснение по оплате"></textarea></label>
+              <div id="adminTicketActions" class="actions top-gap"></div>
+            </section>
+
+            <section class="panel">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow">Материалы</div>
+                  <h2>Фото по кейсу</h2>
+                </div>
+              </div>
+              <div id="adminAttachmentGallery" class="gallery"></div>
+            </section>
+
+            <section class="panel">
+              <div class="section-head">
+                <div>
+                  <div class="eyebrow">Чат</div>
+                  <h2>Диалог с клиентом</h2>
+                </div>
+              </div>
+              <div id="adminMessages" class="chat-list"></div>
+              <div class="composer"><input id="adminReplyInput" placeholder="Ответ клиенту" /><button id="adminReplyButton" class="btn primary">Отправить</button></div>
+              <div class="field-grid two top-gap">
+                <label class="field"><span>Решение по оплате</span><select id="paymentDecisionSelect"><option value="approve">Подтвердить оплату</option><option value="reject">Отклонить оплату</option></select></label>
+                <label class="field"><span>Референс / TXID</span><input id="paymentProviderRefInput" placeholder="Опционально" /></label>
+              </div>
+              <label class="field top-gap"><span>Комментарий по оплате</span><textarea id="paymentNoteInput" rows="3" placeholder="Комментарий после проверки"></textarea></label>
+              <div class="actions top-gap"><button id="paymentDecisionButton" class="btn secondary">Сохранить решение по оплате</button></div>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="./app.js"></script>
+</body>
+</html>
